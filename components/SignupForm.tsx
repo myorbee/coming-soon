@@ -51,7 +51,9 @@ const SignupForm: React.FC = () => {
           <h3 className="text-xl font-medium text-orbee-violet mb-2">
             Thanks for joining us!
           </h3>
-          <p>We'll let you know when Orbee is ready to take your first call.</p>
+          <p>
+            We&apos;ll let you know when Orbee is ready to take your first call.
+          </p>
         </div>
       )}
     </div>

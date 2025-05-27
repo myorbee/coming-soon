@@ -2,7 +2,6 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { DM_Sans, Funnel_Display } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Analytics } from "@vercel/analytics/next";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -41,7 +40,6 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
-        <Analytics />
       </body>
     </html>
   );
