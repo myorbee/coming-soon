@@ -4,7 +4,7 @@
 import React, { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { cn } from "@/lib/utils";
-import { Toaster, toast } from "sonner"; // Import Sonner
+import { toast } from "sonner"; // Import Sonner
 import { subscribeToWaitlist } from "@/actions/send-welcome-email";
 
 const initialState = {
@@ -38,15 +38,21 @@ const SignupForm: React.FC = () => {
     React.useState(false);
 
   useEffect(() => {
-    if (state.success) {
-      toast.success(state.message);
-      setIsSuccessfullySubmitted(true);
-      // Optionally clear the form or redirect
-      // For now, we just show the success message via state
-    } else if (state.message && !state.success) {
-      // Only show error toast if there's a message and it's not a success
-      const errorMessage = state.errors?.email?.[0] || state.message;
-      toast.error(errorMessage);
+    if (state.message) {
+      // Check if there's any message from the action
+      if (state.success && !state.alreadySubscribed) {
+        // New email sent
+        toast.success(state.message);
+        setIsSuccessfullySubmitted(true);
+      } else if (state.alreadySubscribed) {
+        // Explicitly check for alreadySubscribed
+        toast.info(state.message); // Use info toast for "already subscribed"
+        setIsSuccessfullySubmitted(true); // Treat as "form handled" to show the success UI state
+      } else if (!state.success) {
+        // Handle other errors
+        const errorMessage = state.errors?.email?.[0] || state.message;
+        toast.error(errorMessage);
+      }
     }
   }, [state]);
 
@@ -69,7 +75,6 @@ const SignupForm: React.FC = () => {
 
   return (
     <div className="my-8 mx-auto">
-      <Toaster richColors position="top-center" />{" "}
       {/* Add Sonner Toaster component */}
       <form action={formAction} className="space-y-4">
         <div className="flex flex-col md:items-center md:justify-center sm:flex-row md:w-full gap-3">

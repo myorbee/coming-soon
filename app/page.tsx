@@ -50,8 +50,8 @@ export default function Home() {
             {/* Email content */}
             <EmailContent
               isOpen={isEmailOpen}
-              sender="Orbee"
-              senderEmail="hey@orbee.cc"
+              sender="Goodness"
+              senderEmail="ceo@orbee.cc"
               subject="Orbee: Your Inbox Isn't a To-Do List (It's a Conversation Waiting to Happen)"
             />
 

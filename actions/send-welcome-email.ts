@@ -1,25 +1,25 @@
-// app/actions.ts (or lib/actions.ts, or actions/waitlistActions.ts, etc.)
-"use server"; // Important: This marks the file's functions as Server Actions
+// app/actions.ts
+"use server";
 
 import { z } from "zod";
 
-// Define a schema for the form data (matching your API route's schema)
 const WaitlistSignupSchema = z.object({
   email: z
     .string()
     .email({ message: "Invalid email address. Please enter a valid email." }),
 });
 
-// Define a type for the Server Action's return value
+// Updated ActionResult to include alreadySubscribed
 interface ActionResult {
-  success: boolean;
+  success: boolean; // True if the primary action (like sending email OR identifying as already subscribed) was "handled"
   message: string;
-  errors?: { email?: string[] }; // Optional field for specific email errors
-  id?: string; // Optional: ID of the sent message from Resend
+  errors?: { email?: string[] };
+  id?: string; // ID of the sent welcome email, if applicable
+  alreadySubscribed?: boolean; // New flag
 }
 
 export async function subscribeToWaitlist(
-  prevState: any,
+  prevState: any, // Can be used for progressive enhancement, not strictly needed here yet
   formData: FormData
 ): Promise<ActionResult> {
   const email = formData.get("email");
@@ -29,20 +29,18 @@ export async function subscribeToWaitlist(
   if (!validationResult.success) {
     return {
       success: false,
-      message: "Invalid input.",
+      message: "Invalid email.", // Keep message simple for this case
       errors: validationResult.error.flatten().fieldErrors,
+      alreadySubscribed: false,
     };
   }
 
   const validatedEmail = validationResult.data.email;
 
   try {
-    // Construct the absolute URL for your API route
-    // In production, NEXT_PUBLIC_APP_URL should be your deployed app's URL
-    // In development, it can be http://localhost:3000
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const response = await fetch(`${appUrl}/api/v1/send-welcome`, {
-      // Assuming your API route is at /api/send-welcome
+      // Ensure this path is correct
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -53,30 +51,40 @@ export async function subscribeToWaitlist(
     const responseData = await response.json();
 
     if (!response.ok) {
-      // Handle errors from the API route
-      console.error("API Error:", responseData);
+      // This means the API call itself failed (5xx, or 4xx not handled as "already subscribed")
+      console.error("API Error from /api/send-welcome:", responseData);
       return {
         success: false,
-        message:
-          responseData.message ||
-          "An error occurred while subscribing. Please try again.",
-        errors: responseData.errors, // Pass along errors if your API provides them
+        message: responseData.message || "An error occurred. Please try again.",
+        errors: responseData.errors,
+        alreadySubscribed: false,
       };
     }
 
-    // Successfully called the API
+    // If response.ok is true, the API call was successful.
+    // Now check the specific content of responseData.
+    // Your API route returns status 200 with `alreadySubscribed: true` if they are already on the list.
+    if (responseData.alreadySubscribed) {
+      return {
+        success: true, // The "operation" (checking) was successful in a way
+        message: responseData.message, // "You're already on our waitlist!..."
+        alreadySubscribed: true,
+      };
+    }
+
+    // If not already subscribed, and response was ok, it means email was sent.
     return {
       success: true,
-      message:
-        responseData.message ||
-        "Thanks for joining the waitlist! Check your email.",
-      id: responseData.id,
+      message: responseData.message || "Thanks for joining! Check your email.",
+      id: responseData.id, // ID of the sent email
+      alreadySubscribed: false,
     };
   } catch (error) {
-    console.error("Network or unexpected error in server action:", error);
+    console.error("Network or unexpected error in Server Action:", error);
     return {
       success: false,
-      message: "A network error occurred. Please try again later.",
+      message: "A network error occurred. Please try again.",
+      alreadySubscribed: false,
     };
   }
 }

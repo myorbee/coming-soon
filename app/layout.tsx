@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { DM_Sans, Funnel_Display } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default function RootLayout({
           enableSystem={false}
         >
           {children}
+          <Toaster position="top-right" className="md:top-4 md:right-4" />
         </ThemeProvider>
       </body>
     </html>
