@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
+import React, { useState } from "react";
+import { cn } from "@/lib/utils";
 
 const SignupForm: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Signup with email:', email);
+    console.log("Signup with email:", email);
     setIsSubmitted(true);
   };
 
@@ -30,7 +30,7 @@ const SignupForm: React.FC = () => {
                 "transition-all duration-200"
               )}
             />
-            <button 
+            <button
               type="submit"
               className={cn(
                 "bg-orbee-violet hover:bg-orbee-violet-dark text-white font-medium",
@@ -38,16 +38,19 @@ const SignupForm: React.FC = () => {
                 "shadow-sm hover:shadow"
               )}
             >
-              Yes! Tell Me When Orbee Calls!
+              Yes! Tell Me When Orbee Drops!
             </button>
           </div>
           <p className="text-sm text-orbee-gray-500 text-center">
-            No fluff, no spam. Just a heads-up when your personal email agent is ready for its first assignment.
+            No fluff, no spam. Just a heads-up when your personal email agent is
+            ready for its first assignment.
           </p>
         </form>
       ) : (
         <div className="text-center p-6 bg-orbee-light-bg-tint rounded-lg border border-orbee-violet/20">
-          <h3 className="text-xl font-medium text-orbee-violet mb-2">Thanks for joining us!</h3>
+          <h3 className="text-xl font-medium text-orbee-violet mb-2">
+            Thanks for joining us!
+          </h3>
           <p>We'll let you know when Orbee is ready to take your first call.</p>
         </div>
       )}
