@@ -3,6 +3,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import SignupForm from "./SignupForm";
+import Link from "next/link";
 
 interface EmailContentProps {
   isOpen: boolean;
@@ -73,12 +74,12 @@ const EmailContent: React.FC<EmailContentProps> = ({
             water.
           </p>
 
-          <p className="font-medium text-lg mt-8 mb-6">
+          <p className="font-medium font-funnel text-lg mt-8 mb-6">
             But what if you could just… delegate it? To an assistant that
             actually <em>gets</em> you?
           </p>
 
-          <p className="text-xl font-medium text-orbee-violet mb-6">
+          <p className="text-xl font-funnel font-medium text-orbee-violet mb-6">
             That&apos;s Orbee.
           </p>
 
@@ -170,9 +171,9 @@ const EmailContent: React.FC<EmailContentProps> = ({
             So I built an AI to listen.)
           </p>
           <p className="mt-4">
-            <a href="#" className="text-orbee-violet hover:underline">
+            <Link href="orbee.cc" className="text-orbee-violet hover:underline">
               https://orbee.cc
-            </a>
+            </Link>
           </p>
         </div>
       </div>
